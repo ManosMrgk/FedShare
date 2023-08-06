@@ -1,3 +1,4 @@
+from sklearn.model_selection import train_test_split
 import torch
 from torchvision import datasets, transforms
 from torch.utils.tensorboard import SummaryWriter
@@ -14,6 +15,7 @@ from src.update import ModelUpdate
 from src.nets import MLP, CNN_v1, CNN_v2
 from src.strategy import FedAvg
 from src.test import test_img
+from utkface_dataset import UTKFaceDataset
 
 writer = SummaryWriter()
 
@@ -31,6 +33,7 @@ if __name__ == '__main__':
     if args.dataset == 'mnist':
         trans_mnist = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
         dataset = datasets.MNIST('../data/mnist/', train=True, download=True, transform=trans_mnist)
+
         dataset_test = datasets.MNIST('../data/mnist/', train=False, download=True, transform=trans_mnist)
 
         dg = copy.deepcopy(dataset)
@@ -53,7 +56,38 @@ if __name__ == '__main__':
         trans_cifar = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
         dataset = datasets.CIFAR10('../data/cifar', train=True, download=True, transform=trans_cifar)
         dataset_test = datasets.CIFAR10('../data/cifar', train=False, download=True, transform=trans_cifar)
+        dg = copy.deepcopy(dataset)
+        dataset_train = copy.deepcopy(dataset)
+    
+        dg_idx, dataset_train_idx = train_dg_split(dataset, args)
         
+        dg.targets.clear()
+        dataset_train.targets.clear()
+
+        dg.data, dataset_train.data = dataset.data[dg_idx], dataset.data[dataset_train_idx]
+        
+        for i in list(dg_idx):
+            dg.targets.append(dataset[i][1])
+        for i in list(dataset_train_idx):
+            dataset_train.targets.append(dataset[i][1])
+
+        # sample users
+        if args.sampling == 'iid':
+            dict_users = iid(dataset_train, args.num_users)
+        elif args.sampling == 'noniid':
+            dict_users = noniid(dataset_train, args)
+        else:
+            exit('Error: unrecognized sampling')
+    elif args.dataset == 'UTKFace':
+        # dataset = datasets.CIFAR10('../data/cifar', train=True, download=True, transform=trans_cifar)
+        # dataset_test = datasets.CIFAR10('../data/cifar', train=False, download=True, transform=trans_cifar)
+        # utkface_dataset = UTKFaceDataset('./input/UTKFace/', transform=None)
+        # train_size = 0.8  # You can adjust the split ratio as needed
+        # dataset, dataset_test = train_test_split(utkface_dataset, train_size=train_size, shuffle=True)
+        dataset = UTKFaceDataset('./input/UTKFace/', train=True)
+        dataset_test = UTKFaceDataset('./input/UTKFace/', train=False)
+        
+
         dg = copy.deepcopy(dataset)
         dataset_train = copy.deepcopy(dataset)
     
@@ -93,6 +127,8 @@ if __name__ == '__main__':
         for x in img_size:
             len_in *= x
         net_glob = MLP(dim_in=len_in, dim_hidden=200, dim_out=args.num_classes).to(args.device)
+    elif args.model == 'cnn' and args.dataset == 'UTKFace':
+        net_glob = CNN_v2(args=args).to(args.device)
     else:
         exit('Error: unrecognized model')
     

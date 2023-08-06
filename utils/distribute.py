@@ -9,6 +9,8 @@ def uniform_distribute(dataset, args):
         labels = dataset.targets.numpy()
     elif args.dataset == "cifar":
         labels = np.array(dataset.targets)
+    elif args.dataset == "UTKFace":
+        labels = np.array(dataset.targets)
     else:
         exit('Error: unrecognized dataset')
     
@@ -33,11 +35,13 @@ def train_dg_split(dataset, args):
 
     if args.dataset == "mnist":
         labels = dataset.targets.numpy()
+    elif args.dataset == "UTKFace":
+        labels = np.array(dataset.targets)
     elif args.dataset == "cifar":
         labels = np.array(dataset.targets)
     else:
         exit('Error: unrecognized dataset')
-    
+
     idxs_labels = np.vstack((idxs, labels))
     idxs_labels = idxs_labels[:,idxs_labels[1,:].argsort()]
     

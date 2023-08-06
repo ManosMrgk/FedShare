@@ -44,7 +44,7 @@ class ModelUpdate(object):
         for iter in range(local_ep):
             batch_loss = []
             for batch_idx, (images, labels) in enumerate(self.ldr_train):
-                images, labels = images.to(self.args.device), labels.to(self.args.device)
+                images, labels = images.to(self.args.device), labels.type(torch.LongTensor).to(self.args.device)
                 
                 net.zero_grad()
                 log_probs = net(images)

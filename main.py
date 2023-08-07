@@ -79,13 +79,10 @@ if __name__ == '__main__':
         else:
             exit('Error: unrecognized sampling')
     elif args.dataset == 'UTKFace':
-        # dataset = datasets.CIFAR10('../data/cifar', train=True, download=True, transform=trans_cifar)
-        # dataset_test = datasets.CIFAR10('../data/cifar', train=False, download=True, transform=trans_cifar)
-        # utkface_dataset = UTKFaceDataset('./input/UTKFace/', transform=None)
-        # train_size = 0.8  # You can adjust the split ratio as needed
-        # dataset, dataset_test = train_test_split(utkface_dataset, train_size=train_size, shuffle=True)
-        dataset = UTKFaceDataset('./input/UTKFace/', train=True)
-        dataset_test = UTKFaceDataset('./input/UTKFace/', train=False)
+        utk_transform = transforms.Compose([transforms.Resize((32, 32))])
+        
+        dataset = UTKFaceDataset('./input/UTKFace/', train=True, transform=utk_transform)
+        dataset_test = UTKFaceDataset('./input/UTKFace/', train=False, transform=utk_transform)
         
 
         dg = copy.deepcopy(dataset)

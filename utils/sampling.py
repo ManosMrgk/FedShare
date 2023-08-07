@@ -31,9 +31,9 @@ def noniid(dataset, args):
     idx = np.arange(num_dataset)
     dict_users = {i: list() for i in range(args.num_users)}
     
-    min_num = 100
-    max_num = 700
-
+    min_num = 40
+    max_num = 260
+    print('Train dataset size:', num_dataset)
     random_num_size = np.random.randint(min_num, max_num+1, size=args.num_users)
     print(f"Total number of datasets owned by clients : {sum(random_num_size)}")
 

@@ -11,8 +11,9 @@ python3 main.py \
     --all_clients \
     --fed fedavg \
     --gpu 0 \
+    --debug \
     --seed 3 \
-    --sampling iid \
+    --sampling noniid \
     --num_channels 1 \
     --num_classes 2 \
     --dataset UTKFace

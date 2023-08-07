@@ -38,10 +38,9 @@ class UTKFaceDataset(VisionDataset):
             gender = int(img.split("_")[1])
             self.targets.append(gender)
             image_name = img
-            # image = PIL.Image.open(image_name)
             image = cv2.imread(image_name)
             image = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
-            image=cv2.resize(image,(32,32))
+            # image=cv2.resize(image,(32,32))
             data_list.append(image)
         self.data = np.array(data_list)
 
@@ -49,10 +48,9 @@ class UTKFaceDataset(VisionDataset):
         return len(self.data)
     def __getitem__(self, index):
         image_name = self.image_paths[index]
-        # image = PIL.Image.open(image_name)
         image = cv2.imread(image_name)
         image = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
-        image=cv2.resize(image,(32,32))
+        # image=cv2.resize(image,(32,32))
         image=transforms.ToTensor()(image)
         gender = int(self.image_paths[index].split("_")[1])
         if self.transform:

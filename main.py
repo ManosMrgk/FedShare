@@ -187,6 +187,6 @@ if __name__ == '__main__':
             writer.add_scalar(f"Test accuracy:Share{args.dataset}, {args.fed}", acc_test, iter)
             writer.add_scalar(f"Test loss:Share{args.dataset}, {args.fed}", loss_test, iter)
     t = datetime.datetime.now()
-    datetime_str = t.strftime('%Y/%m/%d')
+    datetime_str = t.strftime('%Y%m%d')
     torch.save(net_glob.state_dict(), './'+datetime_str+'_'+args.sampling+'_'+args.dataset+'.pth')
     writer.close()

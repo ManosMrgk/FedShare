@@ -228,7 +228,7 @@ train_dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 val_dataloader = DataLoader(dataset_test, batch_size=batch_size, shuffle=False)
 trained_state_dict, avg_val_epoch_loss = train(model, optimizer, train_dataloader, val_dataloader, loss_func, 4000)
 t = datetime.datetime.now()
-datetime_str = t.strftime('%Y/%m/%d')
+datetime_str = t.strftime('%Y%m%d')
 torch.save(trained_state_dict, './'+datetime_str+'_test_cnn_v2.pth')
 
 

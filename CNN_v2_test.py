@@ -75,6 +75,7 @@ args.num_classes=2
 args.lr=0.001
 args.momentum=0.5
 args.verbose=False
+args.gpu = 0
 args.device = torch.device('cuda:{}'.format(args.gpu) if torch.cuda.is_available() and args.gpu != -1 else 'cpu')
 # Create the model
 # model = CustomCNN(args)

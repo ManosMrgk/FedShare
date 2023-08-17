@@ -66,8 +66,8 @@ def noniid_v2(dataset, args):
     # print("num men:", num_men, "num women:", num_women)
 
     min_num = 40
-    step_men = int(1/49. * (num_men/25 - 80))
-    step_women = int(1/49. * (num_women/25 - 80))
+    step_men = int(1/(args.num_users - 1) * (num_men/(args.num_users/2.) - 80))
+    step_women = int(1/(args.num_users - 1) * (num_women/(args.num_users/2.) - 80))
     print("step men:", step_men, "step women:", step_women)
     itter_men = min_num
     itter_women = min_num + (args.num_users -1) * step_women

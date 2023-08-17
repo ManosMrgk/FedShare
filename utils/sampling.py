@@ -63,7 +63,7 @@ def noniid_v2(dataset, args):
         else:
             num_women += 1
             women.append(i)
-    print("num men:", num_men, "num women:", num_women)
+    # print("num men:", num_men, "num women:", num_women)
 
     min_num = 40
     step_men = int(1/49. * (num_men/25 - 80))
@@ -73,12 +73,41 @@ def noniid_v2(dataset, args):
     itter_women = min_num + (args.num_users -1) * step_women
     for i in range(args.num_users):
         selection = men[:itter_men] + women[:itter_women]
-        print(len(men[:itter_men]), len(women[:itter_women]))
+        # print(len(men[:itter_men]), len(women[:itter_women]))
         dict_users[i].extend(selection)
         del men[:itter_men]
         del women[:itter_women]
 
         itter_men += step_men
         itter_women -= step_women
+
+    return dict_users
+
+
+def iid_v2(dataset, args):
+    dict_users = {i: list() for i in range(args.num_users)}
+    women = []
+    men = []
+    num_men = 0
+    num_women = 0
+    for i in range(len(dataset)):
+        if dataset.targets[i] == 0:
+            num_men += 1
+            men.append(i)
+        else:
+            num_women += 1
+            women.append(i)
+    # print("num men:", num_men, "num women:", num_women)
+
+    itter_men = int(num_men/args.num_users)
+    diff_men = num_men - int(num_men/args.num_users) * args.num_users
+    itter_women = int(num_women/args.num_users)
+    diff_women = num_women - int(num_women/args.num_users) * args.num_users
+    for i in range(args.num_users):
+        selection = men[:itter_men] + women[:itter_women]
+        # print(len(men[:itter_men]), len(women[:itter_women]))
+        dict_users[i].extend(selection)
+        del men[:itter_men]
+        del women[:itter_women]
 
     return dict_users

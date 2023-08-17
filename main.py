@@ -10,7 +10,7 @@ import random
 from tqdm import trange
 
 from utils.distribute import uniform_distribute, train_dg_split
-from utils.sampling import iid, noniid, noniid_v2
+from utils.sampling import iid, iid_v2, noniid, noniid_v2
 from utils.options import args_parser
 from src.update import ModelUpdate
 from src.nets import MLP, CNN_v1, CNN_v2
@@ -104,7 +104,7 @@ if __name__ == '__main__':
 
         # sample users
         if args.sampling == 'iid':
-            dict_users = iid(dataset_train, args.num_users)
+            dict_users = iid_v2(dataset_train, args.num_users)
         elif args.sampling == 'noniid':
             dict_users = noniid_v2(dataset_train, args)
         else:

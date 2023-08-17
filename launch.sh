@@ -16,4 +16,5 @@ python3 main.py \
     --sampling noniid \
     --num_channels 1 \
     --num_classes 2 \
+    --num_users 50 \
     --dataset UTKFace

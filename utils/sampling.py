@@ -47,4 +47,38 @@ def noniid(dataset, args):
         idx = list(set(idx) - rand_set)
         dict_users[i] = rand_set
 
+
+    return dict_users
+
+def noniid_v2(dataset, args):
+    dict_users = {i: list() for i in range(args.num_users)}
+    women = []
+    men = []
+    num_men = 0
+    num_women = 0
+    for i in range(len(dataset)):
+        if dataset.targets[i] == 0:
+            num_men += 1
+            men.append(i)
+        else:
+            num_women += 1
+            women.append(i)
+    print("num men:", num_men, "num women:", num_women)
+
+    min_num = 40
+    step_men = int(1/49. * (num_men/25 - 80))
+    step_women = int(1/49. * (num_women/25 - 80))
+    print("step men:", step_men, "step women:", step_women)
+    itter_men = min_num
+    itter_women = min_num + (args.num_users -1) * step_women
+    for i in range(args.num_users):
+        selection = men[:itter_men] + women[:itter_women]
+        print(len(men[:itter_men]), len(women[:itter_women]))
+        dict_users[i].extend(selection)
+        del men[:itter_men]
+        del women[:itter_women]
+
+        itter_men += step_men
+        itter_women -= step_women
+
     return dict_users

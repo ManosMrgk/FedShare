@@ -84,8 +84,8 @@ def noniid_v2(dataset, args):
     return dict_users
 
 
-def iid_v2(dataset, args):
-    dict_users = {i: list() for i in range(args.num_users)}
+def iid_v2(dataset, num_users):
+    dict_users = {i: list() for i in range(num_users)}
     women = []
     men = []
     num_men = 0
@@ -99,11 +99,11 @@ def iid_v2(dataset, args):
             women.append(i)
     # print("num men:", num_men, "num women:", num_women)
 
-    itter_men = int(num_men/args.num_users)
-    diff_men = num_men - int(num_men/args.num_users) * args.num_users
-    itter_women = int(num_women/args.num_users)
-    diff_women = num_women - int(num_women/args.num_users) * args.num_users
-    for i in range(args.num_users):
+    itter_men = int(num_men/num_users)
+    diff_men = num_men - int(num_men/num_users) * num_users
+    itter_women = int(num_women/num_users)
+    diff_women = num_women - int(num_women/num_users) * num_users
+    for i in range(num_users):
         selection = men[:itter_men] + women[:itter_women]
         # print(len(men[:itter_men]), len(women[:itter_women]))
         dict_users[i].extend(selection)

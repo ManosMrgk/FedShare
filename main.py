@@ -13,7 +13,7 @@ from utils.distribute import uniform_distribute, train_dg_split
 from utils.sampling import iid, iid_v2, noniid, noniid_v2
 from utils.options import args_parser
 from src.update import ModelUpdate
-from src.nets import MLP, CNN_v1, CNN_v2
+from src.nets import MLP, CNN_v1, CNN_v2, CustomCNN
 from src.strategy import FedAvg
 from src.test import test_img
 from utkface_dataset import UTKFaceDataset
@@ -80,8 +80,8 @@ if __name__ == '__main__':
         else:
             exit('Error: unrecognized sampling')
     elif args.dataset == 'UTKFace':
-        utk_transform = transforms.Compose([transforms.Resize((32, 32))])
-        
+        # utk_transform = transforms.Compose([transforms.Resize((32, 32))])
+        utk_transform = None
         dataset = UTKFaceDataset('./input/UTKFace/', train=True, transform=utk_transform)
         dataset_test = UTKFaceDataset('./input/UTKFace/', train=False, transform=utk_transform)
         
@@ -126,7 +126,7 @@ if __name__ == '__main__':
             len_in *= x
         net_glob = MLP(dim_in=len_in, dim_hidden=200, dim_out=args.num_classes).to(args.device)
     elif args.model == 'cnn' and args.dataset == 'UTKFace':
-        net_glob = CNN_v2(args=args).to(args.device)
+        net_glob = CustomCNN(args=args).to(args.device)
     else:
         exit('Error: unrecognized model')
     

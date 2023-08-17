@@ -13,8 +13,8 @@ python3 main.py \
     --gpu 0 \
     --debug \
     --seed 3 \
-    --sampling noniid \
+    --sampling iid \
     --num_channels 1 \
     --num_classes 2 \
-    --num_users 50 \
+    --num_users 15 \
     --dataset UTKFace

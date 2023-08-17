@@ -99,3 +99,36 @@ class Alexnet(nn.Module):
         x = torch.flatten(x, 1)
         x = self.classifier(x)
         return x
+
+class CustomCNN(nn.Module):
+    def __init__(self, args):
+        super(CustomCNN, self).__init__()
+        self.conv1 = nn.Conv2d(args.num_channels, 32, kernel_size=3, padding=1)
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding=1)
+        self.conv3 = nn.Conv2d(64, 128, kernel_size=3, padding=1)
+        self.conv4 = nn.Conv2d(128, 256, kernel_size=3, padding=1)
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
+        self.flatten = nn.Flatten()
+        self.fc1 = nn.Linear(36864, 128) # image size 100
+        self.fc2 = nn.Linear(128, args.num_classes)
+        self.dropout = nn.Dropout(0.2)
+        self.activation = nn.ReLU()
+        self.output_activation = nn.Sigmoid()
+
+    def forward(self, x):
+        x = self.activation(self.conv1(x))
+        x = self.dropout(x)
+        x = self.pool(x)
+        x = self.activation(self.conv2(x))
+        x = self.dropout(x)
+        x = self.pool(x)
+        x = self.activation(self.conv3(x))
+        x = self.dropout(x)
+        x = self.pool(x)
+        x = self.activation(self.conv4(x))
+        x = self.dropout(x)
+        x = self.pool(x)
+        x = self.flatten(x)
+        x = self.dropout(self.activation(self.fc1(x)))
+        x = self.fc2(x)
+        return self.output_activation(x)

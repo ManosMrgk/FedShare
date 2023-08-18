@@ -1,4 +1,5 @@
 import datetime
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -78,8 +79,8 @@ args.verbose=False
 args.gpu = 0
 args.device = torch.device('cuda:{}'.format(args.gpu) if torch.cuda.is_available() and args.gpu != -1 else 'cpu')
 # Create the model
-# model = CustomCNN(args)
-model = CNN_v2(args)
+model = CustomCNN(args)
+# model = CNN_v2(args)
 
 
 batch_size = 32
@@ -91,7 +92,7 @@ optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 # Load the dataset and preprocess as needed
 utk_transform = transforms.Compose([transforms.Resize((32, 32))])
-# utk_transform = None
+utk_transform = None
 
 dataset = UTKFaceDataset('./input/UTKFace/', train=True, transform=utk_transform)
 dataset_test = UTKFaceDataset('./input/UTKFace/', train=False, transform=utk_transform)
@@ -140,10 +141,29 @@ dataset_test = UTKFaceDataset('./input/UTKFace/', train=False, transform=utk_tra
 
 #     return net.state_dict()
 
+class EarlyStopper:
+    def __init__(self, patience=1, min_delta=0):
+        self.patience = patience
+        self.min_delta = min_delta
+        self.counter = 0
+        self.min_validation_loss = np.inf
+
+    def early_stop(self, validation_loss):
+        if validation_loss < self.min_validation_loss:
+            self.min_validation_loss = validation_loss
+            self.counter = 0
+        elif validation_loss > (self.min_validation_loss + self.min_delta):
+            self.counter += 1
+            if self.counter >= self.patience:
+                return True
+        return False
+
+
 def train(net, optimizer, dataloader, val_dataloader, loss_func, num_epochs):
-    net.train()
+    early_stopper = EarlyStopper(patience=3, min_delta=0.001)
 
     for epoch in range(num_epochs):
+        net.train()
         train_epoch_loss = 0.0
         correct_train = 0
         total_train = 0
@@ -166,7 +186,10 @@ def train(net, optimizer, dataloader, val_dataloader, loss_func, num_epochs):
         
         avg_train_epoch_loss = train_epoch_loss / len(dataloader)
         train_accuracy = correct_train / total_train
-        
+        if epoch % 15 == 0:
+            t = datetime.datetime.now()
+            datetime_str = t.strftime('%Y%m%d')
+            torch.save(net.state_dict(), './'+datetime_str+'_'+str(epoch)+'_test_cnn_v2.pth')
         # Validation loop
         net.eval()
         val_epoch_loss = 0.0
@@ -187,8 +210,9 @@ def train(net, optimizer, dataloader, val_dataloader, loss_func, num_epochs):
         
         avg_val_epoch_loss = val_epoch_loss / len(val_dataloader)
         val_accuracy = correct_val / total_val
-        
         print(f"Epoch [{epoch+1}/{num_epochs}], Train Loss: {avg_train_epoch_loss:.6f}, Train Acc: {train_accuracy*100:.2f}%, Val Loss: {avg_val_epoch_loss:.6f}, Val Acc: {val_accuracy*100:.2f}%")
+        if early_stopper.early_stop(avg_val_epoch_loss):             
+            break
 
     return net.state_dict(), avg_val_epoch_loss
 

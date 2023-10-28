@@ -17,6 +17,7 @@ from src.nets import MLP, CNN_v1, CNN_v2, CustomCNN
 from src.strategy import FedAvg
 from src.test import test_img
 from utkface_dataset import UTKFaceDataset
+from fairface_dataset import FairFaceDataset
 
 writer = SummaryWriter()
 
@@ -109,7 +110,36 @@ if __name__ == '__main__':
             dict_users = noniid_v2(dataset_train, args)
         else:
             exit('Error: unrecognized sampling')
+    elif args.dataset == 'FairFace':
+        # fair_transform = transforms.Compose([transforms.Resize((32, 32))])
+        fair_transform = None
+        dataset = FairFaceDataset('./input/FairFace/', train=True, transform=fair_transform)
+        dataset_test = FairFaceDataset('./input/FairFace/', train=False, transform=fair_transform)
+        
+
+        dg = copy.deepcopy(dataset)
+        dataset_train = copy.deepcopy(dataset)
     
+        dg_idx, dataset_train_idx = train_dg_split(dataset, args)
+        
+        dg.targets.clear()
+        dataset_train.targets.clear()
+
+        
+        dg.data, dataset_train.data = dataset.data[dg_idx], dataset.data[dataset_train_idx]
+        
+        for i in list(dg_idx):
+            dg.targets.append(dataset[i][1])
+        for i in list(dataset_train_idx):
+            dataset_train.targets.append(dataset[i][1])
+
+        # sample users
+        if args.sampling == 'iid':
+            dict_users = iid_v2(dataset_train, args.num_users)
+        elif args.sampling == 'noniid':
+            dict_users = noniid_v2(dataset_train, args)
+        else:
+            exit('Error: unrecognized sampling')
     else:
         exit('Error: unrecognized dataset')
     
@@ -126,6 +156,8 @@ if __name__ == '__main__':
             len_in *= x
         net_glob = MLP(dim_in=len_in, dim_hidden=200, dim_out=args.num_classes).to(args.device)
     elif args.model == 'cnn' and args.dataset == 'UTKFace':
+        net_glob = CustomCNN(args=args).to(args.device)
+    elif args.model == 'cnn' and args.dataset == 'FairFace':
         net_glob = CustomCNN(args=args).to(args.device)
     else:
         exit('Error: unrecognized model')

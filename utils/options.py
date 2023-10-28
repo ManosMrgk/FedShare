@@ -20,7 +20,7 @@ def args_parser():
     parser.add_argument('--alpha', type=float, default=0.05, help="random portion of global dataset")
 
     # other arguments
-    parser.add_argument('--dataset', type=str, default='UTKFace', help="name of dataset")
+    parser.add_argument('--dataset', type=str, default='FairFace', help="name of dataset")
     parser.add_argument('--model', type=str, default='cnn', help='model name')
     parser.add_argument('--sampling', type=str, default='noniid', help="sampling method")
     parser.add_argument('--num_classes', type=int, default=10, help="number of classes")

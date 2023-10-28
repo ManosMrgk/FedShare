@@ -16,5 +16,5 @@ python3 main.py \
     --sampling iid \
     --num_channels 1 \
     --num_classes 2 \
-    --num_users 15 \
-    --dataset UTKFace
+    --num_users 5 \
+    --dataset FairFace

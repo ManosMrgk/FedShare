@@ -56,8 +56,9 @@ def noniid_v2(dataset, args):
     men = []
     num_men = 0
     num_women = 0
-    for i in range(len(dataset)):
-        if dataset.targets[i] == 0:
+    targets = dataset.targets if type(dataset.targets) != dict else dataset.targets['gender']
+    for i in range(len(targets)):
+        if targets[i] == 0:
             num_men += 1
             men.append(i)
         else:
@@ -90,8 +91,9 @@ def iid_v2(dataset, num_users):
     men = []
     num_men = 0
     num_women = 0
-    for i in range(len(dataset)):
-        if dataset.targets[i] == 0:
+    targets = dataset.targets if type(dataset.targets) != dict else dataset.targets['gender']
+    for i in range(len(targets)):
+        if targets[i] == 0:
             num_men += 1
             men.append(i)
         else:

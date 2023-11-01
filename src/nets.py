@@ -109,7 +109,8 @@ class CustomCNN(nn.Module):
         self.conv4 = nn.Conv2d(128, 256, kernel_size=3, padding=1)
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
         self.flatten = nn.Flatten()
-        self.fc1 = nn.Linear(36864, 128) # image size 100
+        size = 50176 if args.dataset = 'FairFace' else 36864 #UTKFace
+        self.fc1 = nn.Linear(size, 128) # image size 100
         self.fc2 = nn.Linear(128, args.num_classes)
         self.dropout = nn.Dropout(0.2)
         self.activation = nn.ReLU()

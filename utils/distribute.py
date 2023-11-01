@@ -12,7 +12,7 @@ def uniform_distribute(dataset, args):
     elif args.dataset == "UTKFace":
         labels = np.array(dataset.targets)
     elif args.dataset == "FairFace":
-        labels = np.array(dataset.targets)
+        labels = np.array(dataset.targets['gender'])
     else:
         exit('Error: unrecognized dataset')
     
@@ -40,7 +40,7 @@ def train_dg_split(dataset, args):
     elif args.dataset == "UTKFace":
         labels = np.array(dataset.targets)
     elif args.dataset == "FairFace":
-        labels = np.array(dataset.targets)
+        labels = np.array(dataset.targets['gender'])
     elif args.dataset == "cifar":
         labels = np.array(dataset.targets)
     else:
@@ -53,8 +53,8 @@ def train_dg_split(dataset, args):
     labels = idxs_labels[1]
     
     for i in range(args.num_classes):
-        specific_class = np.extract(labels == i, idxs)
         
+        specific_class = np.extract(labels == i, idxs)
         dg = np.random.choice(specific_class, args.classwise, replace=False)
         
         train_tmp = set(specific_class)-set(dg)

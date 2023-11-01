@@ -121,19 +121,29 @@ if __name__ == '__main__':
         dataset_train = copy.deepcopy(dataset)
     
         dg_idx, dataset_train_idx = train_dg_split(dataset, args)
-        
         dg.targets.clear()
         dataset_train.targets.clear()
 
+        dg.data, dataset_train.data = [dataset[i][0] for i in dg_idx], [dataset[i][0] for i in dataset_train_idx]
         
-        dg.data, dataset_train.data = dataset.data[dg_idx], dataset.data[dataset_train_idx]
-        
+        # dg.data, dataset_train.data = dataset[dg_idx], dataset[dataset_train_idx]
+        if type(dg.targets) == dict:
+            dg.targets['gender'] = []
+        if type(dataset_train.targets) == dict:
+            dataset_train.targets['gender'] = []
         for i in list(dg_idx):
-            dg.targets.append(dataset[i][1])
+            if type(dg.targets) == dict:
+                dg.targets['gender'].append(dataset[i][1])
+            else:
+                dg.targets.append(dataset[i][1])
         for i in list(dataset_train_idx):
-            dataset_train.targets.append(dataset[i][1])
+            if type(dataset_train.targets) == dict:
+                dataset_train.targets['gender'].append(dataset[i][1])
+            else:
+                dataset_train.targets.append(dataset[i][1])
 
         # sample users
+        print("Using sampling method:", args.sampling)
         if args.sampling == 'iid':
             dict_users = iid_v2(dataset_train, args.num_users)
         elif args.sampling == 'noniid':
